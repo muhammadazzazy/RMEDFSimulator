@@ -7,7 +7,7 @@
 
 using namespace std;
 
-bool flag = false;
+bool flag;
 
 static bool parse(string filepath, vector<string>& tasks, vector<int>& periods, vector<int>& capacities, vector<int>& deadlines)
 {
@@ -120,8 +120,18 @@ static int get_idx(vector<string>& tasks, vector<int>& periods, int time)
 
 int main()
 {
-    //string filepath = "problem8.txt";
-    string filepath = "example.txt";
+    bool in = true;
+    string suffix;
+    if (in)
+    {
+        suffix = "_in";
+    }
+    //string filename = "problem8";
+    string filename = "example";
+
+    string file_extension = ".txt";
+    string filepath = filename + suffix + file_extension;
+    
     vector<string> tasks;
     vector<int> periods;
     vector<int> capacities;
@@ -132,12 +142,27 @@ int main()
     }
 
     int hyperperiod = calculate_hyperperiod(periods);
+
     sort(tasks, periods, capacities, deadlines);
     vector<string> schedule(hyperperiod);
-
     vector<int> arr(tasks.size());
     arr = capacities;
+    flag = false;
+    ofstream file;
+    in = false;
+    if (!in)
+    {
+        suffix = "_out";
+    }
+    string algorithm = "_rm";
+    if (flag)
+    {
+        algorithm = "edf";
+    }
+    filepath = filename + suffix + algorithm + file_extension;
+    file.open(filepath);
 
+    cout << "RM Scheduling Algorithm\n";
     bool lock;
     int idx = -1;
     for (int i = 0; i < hyperperiod; i++)
@@ -154,6 +179,7 @@ int main()
                     schedule[i] = tasks[j];
                     arr[j]--;
                     cout << "Time " << i << ": " << schedule[i] << endl;
+                    file << "Time: " << i << " " << schedule[i] << endl;
                 }
                 continue;
             }
@@ -165,25 +191,55 @@ int main()
                     schedule[i] = tasks[j];
                     arr[j]--;
                     cout << "Time " << i << ": " << schedule[i] << endl;
+                    file << "Time: " << i << " " << schedule[i] << endl;
                     break;
                 }
             }
         }
     }
 
+    file.close();
+
     tasks.clear();
     periods.clear();
     capacities.clear();
     deadlines.clear();
-    flag = true;
-    parse(filepath, tasks, periods, capacities, deadlines);
-    sort(tasks, periods, capacities, deadlines);
-    for (int i = 0; i < tasks.size(); i++)
-    {
-        cout << tasks[i] << endl;
-    }
 
-
+    //cout << "EDF Scheduling Algorithm\n";
+    //flag = true;
+    //parse(filepath, tasks, periods, capacities, deadlines);
+    //sort(tasks, periods, capacities, deadlines);
+    //for (int i = 0; i < tasks.size(); i++)
+    //{
+    //    cout << tasks[i] << endl;
+    //}
+    //arr = capacities;
+    //for (int i = 0; i < hyperperiod; i++)
+    //{
+    //    lock = false;
+    //    for (int j = 0; j < tasks.size(); j++)
+    //    {
+    //        // issue here
+    //        if ((i != 0) && ((i % periods[j]) == 0))
+    //        {
+    //            if(!lock)
+    //            {
+    //                schedule[i] = tasks[j];
+    //                arr[j]--;
+    //                cout << "Time " << i << ": " << schedule[i] << endl;
+    //                lock = true;
+    //                break;
+    //            }
+    //        }
+    //        if (arr[j] != 0)
+    //        {
+    //            schedule[i] = tasks[j];
+    //            arr[j]--;
+    //            cout << "Time " << i << ": " << schedule[i] << endl;
+    //            break;
+    //        }
+    //    }
+    //}
 
     return 0;
 }
