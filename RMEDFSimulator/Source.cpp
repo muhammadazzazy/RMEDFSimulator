@@ -34,13 +34,9 @@ static bool parse(string filepath, vector<string>& tasks, vector<int>& periods, 
         int capacity = stoi(value);
         capacities.push_back(capacity);
         
-        if (flag)
-        {
-            getline(ss, value, ',');
-            int deadline = stoi(value);
-            deadlines.push_back(deadline);
-        }
-
+        getline(ss, value, ',');
+        int deadline = stoi(value);
+        deadlines.push_back(deadline);
     }
     file.close();
     return true;
@@ -121,90 +117,110 @@ static int get_idx(vector<string>& tasks, vector<int>& periods, int time)
 
 static void rma(vector<string> tasks, vector<int> periods, vector<int> capacities, int hyperperiod)
 {
-    vector<int> v;
-    sort(tasks, periods, capacities, v);
+    vector<int> vec;
+    sort(tasks, periods, capacities, vec);
     vector<string> schedule(hyperperiod);
-    vector<int> arr(tasks.size());
-    arr = capacities;
+    vector<int> arr = capacities;
+    
     ofstream file;
-    string filepath = "example_out.txt";
+    //string filepath = "problem8_out_rma.txt";
+    string filepath = "example_out_rma.txt";
     file.open(filepath);
+    
     cout << "RM Scheduling Algorithm\n";
     bool lock;
     int idx = -1;
-    for (int i = 0; i < hyperperiod; i++)
+    int timer = 0;
+    while(timer < hyperperiod)
     {
         lock = false;
-        for (int j = 0; j < tasks.size(); j++)
+        for (int i = 0; i < tasks.size(); i++)
         {
-            if ((i != 0) && ((i % periods[j]) == 0))
+            if ((timer != 0) && ((timer % periods[i]) == 0))
             {
-                arr[j] = capacities[j];
+                arr[i] = capacities[i];
                 if (!lock)
                 {
                     lock = true;
-                    schedule[i] = tasks[j];
-                    arr[j]--;
-                    cout << "Time " << i << ": " << schedule[i] << endl;
-                    file << "Time: " << i << " " << schedule[i] << endl;
+                    schedule[timer] = tasks[i];
+                    arr[i]--;
+                    cout << "Time " << timer << ": " << schedule[timer] << endl;
+                    file << "Time: " << timer << " " << schedule[timer] << endl;
                 }
                 continue;
             }
-            if (arr[j] != 0)
+            if (arr[i] != 0)
             {
-                idx = get_idx(tasks, periods, i);
+                idx = get_idx(tasks, periods, timer);
                 if (idx == -1)
                 {
-                    schedule[i] = tasks[j];
-                    arr[j]--;
-                    cout << "Time " << i << ": " << schedule[i] << endl;
-                    file << "Time: " << i << " " << schedule[i] << endl;
+                    schedule[timer] = tasks[i];
+                    arr[i]--;
+                    cout << "Time " << timer << ": " << schedule[timer] << endl;
+                    file << "Time: " << timer << " " << schedule[timer] << endl;
                     break;
                 }
             }
         }
+        timer++;
     }
     file.close();
-    tasks.clear();
-    periods.clear();
-    capacities.clear();
 }
 
 static void edf(vector<string> tasks, vector<int> periods, vector<int> capacities, vector<int> deadlines, int hyperperiod)
 {
-    //filepath = "example_in.txt";
+    cout << "EDF Scheduling Algorithm\n";
+    ofstream file;
+    //string filepath = "problem8_out_edf.txt";
+    string filepath = "example_out_edf.txt";
+    file.open(filepath);
 
-    //cout << "EDF Scheduling Algorithm\n";
-    //flag = true;
-    //parse(filepath, tasks, periods, capacities, deadlines);
-    //sort(tasks, periods, capacities, deadlines);
-    //vector<vector<int>> mat;
-    //for (int i = 0; i < tasks.size(); i++)
-    //{
+    sort(tasks, periods, capacities, deadlines);
+    vector<vector<int>> matrix(tasks.size());
+    vector<string> schedule(hyperperiod);
+    bool lock;
+    for (int i = 0; i < tasks.size(); i++)
+    {
+        matrix[i].push_back(deadlines[i]);
+        for (int j = 1; j <= hyperperiod / periods[i]; j++)
+        {
+            matrix[i].push_back(deadlines[i] + j * periods[i]);
+            cout << matrix[i][j-1] << endl;
+        }
+    }
+    vector<int> arr = capacities;
+    int timer = 0;
+    while(timer < hyperperiod)
+    {
+        lock = false;
+        for (int i = 0; i < tasks.size(); i++)
+        {
+            if ((timer != 0) && ((timer % periods[i]) == 0))
+            {
+                arr[i] = capacities[i];
+            }
+            //for (int j = 0; j < matrix.size(); j++)
+            //{
+            //    for (int k = 0; k < matrix[j].size(); k++)
+            //    {
+            //        if (timer == matrix[j][k])
+            //        {
+            //            matrix[j].erase(matrix[j].begin() + k);
+            //        }
+            //    }
+            //}
 
-    //}
-
-    //arr = capacities;
-    //cout << hyperperiod << endl;
-    //for (int i = 0; i < hyperperiod; i++)
-    //{
-    //    lock = false;
-    //    for (int j = 0; j < tasks.size(); j++)
-    //    {
-    //        if ((i % periods[j] == 0))
-    //        {
-    //            
-    //        }
-    //        else if (arr[j] != 0)
-    //        {
-    //            schedule[i] = tasks[j];
-    //            arr[j]--;
-    //            cout << tasks[j] << " " << arr[j] << endl;
-    //            cout << "Time " << i << ": " << schedule[i] << endl;
-    //            break;
-    //        }
-    //    }
-    //}
+            if (arr[i] != 0)
+            {
+                schedule[timer] = tasks[i];
+                arr[i]--;
+                cout << tasks[i] << " " << arr[i] << endl;
+                cout << "Time " << timer << ": " << schedule[timer] << endl;
+                break;
+            }
+        }
+        timer++;
+    }
 }
 
 int main()
@@ -216,18 +232,19 @@ int main()
     vector<int> periods;
     vector<int> capacities;
     vector<int> deadlines;
+
     if (!parse(filepath, tasks, periods, capacities, deadlines))
     {
+        cout << "Error parsing input files\n";
         return -1;
     }
 
     int hyperperiod = calculate_hyperperiod(periods);
 
     rma(tasks, periods, capacities, hyperperiod);
-    
-    //string filepath = "problem8_in.txt";
 
     flag = true;
     //edf(tasks, periods, capacities, deadlines, hyperperiod);
+    
     return 0;
 }
