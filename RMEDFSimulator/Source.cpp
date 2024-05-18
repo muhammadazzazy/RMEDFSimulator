@@ -171,13 +171,18 @@ int main()
         }
     }
 
-    //flag = true;
-    //parse(filepath, tasks, periods, capacities, deadlines);
-    //sort(tasks, periods, capacities, deadlines);
-    //for (int i = 0; i < tasks.size(); i++)
-    //{
-    //    cout << tasks[i] << endl;
-    //}
+    tasks.clear();
+    periods.clear();
+    capacities.clear();
+    deadlines.clear();
+    flag = true;
+    parse(filepath, tasks, periods, capacities, deadlines);
+    sort(tasks, periods, capacities, deadlines);
+    for (int i = 0; i < tasks.size(); i++)
+    {
+        cout << tasks[i] << endl;
+    }
+
 
 
     return 0;
