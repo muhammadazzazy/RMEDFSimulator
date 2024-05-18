@@ -7,7 +7,7 @@
 
 using namespace std;
 
-bool flag;
+bool flag = false;
 
 static bool parse(string filepath, vector<string>& tasks, vector<int>& periods, vector<int>& capacities, vector<int>& deadlines)
 {
@@ -118,50 +118,17 @@ static int get_idx(vector<string>& tasks, vector<int>& periods, int time)
     return -1;
 }
 
-int main()
+
+static void rma(vector<string> tasks, vector<int> periods, vector<int> capacities, int hyperperiod)
 {
-    bool in = true;
-    string suffix;
-    if (in)
-    {
-        suffix = "_in";
-    }
-    //string filename = "problem8";
-    string filename = "example";
-
-    string file_extension = ".txt";
-    string filepath = filename + suffix + file_extension;
-    
-    vector<string> tasks;
-    vector<int> periods;
-    vector<int> capacities;
-    vector<int> deadlines;
-    if (!parse(filepath, tasks, periods, capacities, deadlines))
-    {
-        return -1;
-    }
-
-    int hyperperiod = calculate_hyperperiod(periods);
-
-    sort(tasks, periods, capacities, deadlines);
+    vector<int> v;
+    sort(tasks, periods, capacities, v);
     vector<string> schedule(hyperperiod);
     vector<int> arr(tasks.size());
     arr = capacities;
-    flag = false;
     ofstream file;
-    in = false;
-    if (!in)
-    {
-        suffix = "_out";
-    }
-    string algorithm = "_rm";
-    if (flag)
-    {
-        algorithm = "edf";
-    }
-    filepath = filename + suffix + algorithm + file_extension;
+    string filepath = "example_out.txt";
     file.open(filepath);
-
     cout << "RM Scheduling Algorithm\n";
     bool lock;
     int idx = -1;
@@ -197,27 +164,26 @@ int main()
             }
         }
     }
-
-    
     file.close();
     tasks.clear();
     periods.clear();
     capacities.clear();
-    deadlines.clear();
+}
 
-    in = true;
-    if (in)
-    {
-        suffix = "_in";
-    }
-    //string filename = "problem8";
-    filename = "example";
-    filepath = filename + suffix + file_extension;
+static void edf(vector<string> tasks, vector<int> periods, vector<int> capacities, vector<int> deadlines, int hyperperiod)
+{
+    //filepath = "example_in.txt";
 
     //cout << "EDF Scheduling Algorithm\n";
     //flag = true;
     //parse(filepath, tasks, periods, capacities, deadlines);
     //sort(tasks, periods, capacities, deadlines);
+    //vector<vector<int>> mat;
+    //for (int i = 0; i < tasks.size(); i++)
+    //{
+
+    //}
+
     //arr = capacities;
     //cout << hyperperiod << endl;
     //for (int i = 0; i < hyperperiod; i++)
@@ -225,22 +191,9 @@ int main()
     //    lock = false;
     //    for (int j = 0; j < tasks.size(); j++)
     //    {
-    //        if ((i % periods[j] == 0) && deadlines[j] < i)
+    //        if ((i % periods[j] == 0))
     //        {
-    //            cout << tasks[j] << endl;
-    //            if (arr[j] == 0)
-    //            {
-    //                arr[j] = capacities[j];
-    //            }
-    //            if (deadlines[j] + i < hyperperiod)
-    //            {
-    //                deadlines[j] += i;
-    //            }
-    //            sort(tasks, periods, capacities, deadlines);
-    //            //for (int j = 0; j < 3; j++)
-    //            //{
-    //            //    cout << tasks[j] << " " << deadlines[j] << endl;
-    //            //}
+    //            
     //        }
     //        else if (arr[j] != 0)
     //        {
@@ -252,6 +205,29 @@ int main()
     //        }
     //    }
     //}
+}
 
+int main()
+{
+    //string filepath = "problem8_in.txt";
+    string filepath = "example_in.txt";
+    
+    vector<string> tasks;
+    vector<int> periods;
+    vector<int> capacities;
+    vector<int> deadlines;
+    if (!parse(filepath, tasks, periods, capacities, deadlines))
+    {
+        return -1;
+    }
+
+    int hyperperiod = calculate_hyperperiod(periods);
+
+    rma(tasks, periods, capacities, hyperperiod);
+    
+    //string filepath = "problem8_in.txt";
+
+    flag = true;
+    //edf(tasks, periods, capacities, deadlines, hyperperiod);
     return 0;
 }
