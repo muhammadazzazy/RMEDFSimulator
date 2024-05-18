@@ -198,43 +198,55 @@ int main()
         }
     }
 
+    
     file.close();
-
     tasks.clear();
     periods.clear();
     capacities.clear();
     deadlines.clear();
 
+    in = true;
+    if (in)
+    {
+        suffix = "_in";
+    }
+    //string filename = "problem8";
+    filename = "example";
+    filepath = filename + suffix + file_extension;
+
     //cout << "EDF Scheduling Algorithm\n";
     //flag = true;
     //parse(filepath, tasks, periods, capacities, deadlines);
     //sort(tasks, periods, capacities, deadlines);
-    //for (int i = 0; i < tasks.size(); i++)
-    //{
-    //    cout << tasks[i] << endl;
-    //}
     //arr = capacities;
+    //cout << hyperperiod << endl;
     //for (int i = 0; i < hyperperiod; i++)
     //{
     //    lock = false;
     //    for (int j = 0; j < tasks.size(); j++)
     //    {
-    //        // issue here
-    //        if ((i != 0) && ((i % periods[j]) == 0))
+    //        if ((i % periods[j] == 0) && deadlines[j] < i)
     //        {
-    //            if(!lock)
+    //            cout << tasks[j] << endl;
+    //            if (arr[j] == 0)
     //            {
-    //                schedule[i] = tasks[j];
-    //                arr[j]--;
-    //                cout << "Time " << i << ": " << schedule[i] << endl;
-    //                lock = true;
-    //                break;
+    //                arr[j] = capacities[j];
     //            }
+    //            if (deadlines[j] + i < hyperperiod)
+    //            {
+    //                deadlines[j] += i;
+    //            }
+    //            sort(tasks, periods, capacities, deadlines);
+    //            //for (int j = 0; j < 3; j++)
+    //            //{
+    //            //    cout << tasks[j] << " " << deadlines[j] << endl;
+    //            //}
     //        }
-    //        if (arr[j] != 0)
+    //        else if (arr[j] != 0)
     //        {
     //            schedule[i] = tasks[j];
     //            arr[j]--;
+    //            cout << tasks[j] << " " << arr[j] << endl;
     //            cout << "Time " << i << ": " << schedule[i] << endl;
     //            break;
     //        }
